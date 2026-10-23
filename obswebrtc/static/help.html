@@ -97,8 +97,8 @@
         <span data-self-signed>The first time, the phone warns about the certificate; accept it
         (<a href="#cert">how</a>).</span></li>
       <li><b>Pick a camera slot</b> on the phone, press <b>Start</b> and allow camera (and microphone) access.</li>
-      <li><b>In OBS</b>, add a <b>Browser Source</b> with that slot's URL from the
-        <a href="#obs">table below</a>, size 1920×1080.</li>
+      <li><b>In OBS</b>, open the script settings, pick the camera under <b>Browser Sources</b> and press
+        <b>Add / update in current scene</b>.</li>
     </ol>
   </section>
 
@@ -131,7 +131,18 @@
 
   <section id="obs">
     <h2>Adding cameras in OBS</h2>
-    <p>Add one <b>Browser Source</b> per camera slot with these settings:</p>
+    <div class="card">
+      <b>Easiest:</b> in the script settings (Tools → Scripts → obs_webrtc.py), under <b>Browser Sources</b>:
+      <ul>
+        <li><b>Add / update in current scene</b> creates the source <b>"WebRTC Cam N"</b> for the chosen camera,
+          with all the settings below, and fits it to the canvas. If it already exists, its settings are
+          updated and it's added to the current scene if missing. In Studio Mode it goes to the preview scene.</li>
+        <li><b>Add all cameras</b> does the same for every slot.</li>
+        <li><b>Source size</b>: 1920×1080, 1280×720 or 1080×1920 for phones held upright.</li>
+      </ul>
+      After changing the OBS port, press the button again so the sources get the new URL.
+    </div>
+    <p>To set up a source by hand, add a <b>Browser Source</b> with these settings:</p>
     <div class="table-wrap"><table>
       <tr><th>Setting</th><th>Value</th></tr>
       <tr><td>URL</td><td>The slot's URL from the table below</td></tr>
@@ -159,7 +170,7 @@
     <p class="muted">OBS → Tools → Scripts → obs_webrtc.py</p>
     <ul>
       <li><b>OBS port</b> (<span data-fill="localPort">8080</span>): local address the Browser Sources use.</li>
-      <li><b>Allow phones / Phone port</b> (<span data-fill="httpsPort">8443</span>): the HTTPS address phones use.</li>
+      <li><b>Phone port</b> (<span data-fill="httpsPort">8443</span>): the HTTPS address phones use.</li>
       <li><b>Max cameras</b> (<span data-fill="maxCameras">5</span>): how many slots phones can choose.
         Changing ports or max cameras restarts the server, and phones reconnect by themselves.</li>
       <li><b>Stable buffer</b> (<span data-fill="buffer">100 ms</span>): see <a href="#sync">audio sync</a>.
@@ -297,8 +308,8 @@
     <p class="muted" data-self-signed>First visit: accept the certificate warning on the phone.</p>
     <p class="muted" id="qr-multi" hidden>Doesn't load? Try another address; this PC has more than one network adapter.</p>
   </div>
-  <p id="qr-none" hidden>Phone access is off, or no network address was found. Turn on
-    <b>Allow phones</b> in the script settings.</p>
+  <p id="qr-none" hidden>No network address was found. Connect this PC to the network,
+    then reload the script in OBS.</p>
 </dialog>
 
 <script type="module" src="/static/help.js"></script>
