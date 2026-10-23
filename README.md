@@ -33,7 +33,7 @@ No app to install on the phone: open a web page, pick a camera slot, press Start
 ### 1. Get the files
 
 ```
-git clone https://github.com/<your-account>/obs-webrtc.git
+git clone https://github.com/reaby/obs-webrtc.git
 ```
 
 Or download the ZIP from GitHub and extract it. Keep the folder somewhere permanent, because
