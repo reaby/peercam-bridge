@@ -205,6 +205,11 @@ peercam/
 setup.bat, setup.sh    create .venv and install requirements.txt
 ```
 
+## Acknowledgements
+
+Built with the help of [Claude](https://claude.ai) by Anthropic, which turned an idea into a
+working project in a fraction of the usual time. Thanks, Claude!
+
 ## License
 
 [MIT](LICENSE)
