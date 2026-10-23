@@ -1,5 +1,5 @@
 @echo off
-rem Creates .venv for the OBS WebRTC script and installs its packages.
+rem Creates .venv for the PeerCam Bridge script and installs its packages.
 rem Usage: setup.bat [path\to\python.exe]
 rem The Python must be the same version (and 64-bit) as the one set in
 rem OBS > Tools > Scripts > Python Settings.
@@ -42,5 +42,5 @@ echo.
 echo Done. Next, in OBS:
 echo   1. Tools ^> Scripts ^> Python Settings: set the install path to
 echo        %PYHOME%
-echo   2. Scripts tab: press + and choose %~dp0obs_webrtc.py
+echo   2. Scripts tab: press + and choose %~dp0peercam_bridge.py
 endlocal

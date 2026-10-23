@@ -1,7 +1,7 @@
 import logging
 import sys
 
-LOGGER_NAME = "obswebrtc"
+LOGGER_NAME = "peercam"
 
 
 def setup_logging(level=logging.INFO):

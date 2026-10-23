@@ -1,5 +1,5 @@
 #!/bin/sh
-# Creates .venv for the OBS WebRTC script and installs its packages.
+# Creates .venv for the PeerCam Bridge script and installs its packages.
 # Usage: ./setup.sh [path/to/python3]
 # The Python must be the same version as the one OBS uses: on Linux that's
 # usually the system python3; on macOS the one set in OBS > Tools > Scripts >
@@ -42,4 +42,4 @@ echo
 echo "Done. Next, in OBS:"
 echo "  1. macOS only: Tools > Scripts > Python Settings: set the install path to"
 echo "       $PYHOME"
-echo "  2. Scripts tab: press + and choose $(pwd)/obs_webrtc.py"
+echo "  2. Scripts tab: press + and choose $(pwd)/peercam_bridge.py"

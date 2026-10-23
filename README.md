@@ -1,4 +1,4 @@
-# OBS WebRTC
+# PeerCam Bridge
 
 Use phones and tablets as wireless cameras in OBS Studio, over your local network.
 No app to install on the phone: open a web page, pick a camera slot, press Start.
@@ -33,7 +33,7 @@ No app to install on the phone: open a web page, pick a camera slot, press Start
 ### 1. Get the files
 
 ```
-git clone https://github.com/reaby/obs-webrtc.git
+git clone https://github.com/reaby/peercam-bridge.git
 ```
 
 Or download the ZIP from GitHub and extract it. Keep the folder somewhere permanent, because
@@ -78,7 +78,7 @@ When the script finishes, it prints the Python folder to use in the next step.
 <details>
 <summary>Manual setup (without the scripts)</summary>
 
-Run these in the obs-webrtc folder, using the **same Python version as OBS**.
+Run these in the peercam-bridge folder, using the **same Python version as OBS**.
 
 Windows:
 
@@ -111,7 +111,7 @@ On Linux, OBS already uses the system Python; skip this step.
 
 ### 5. Add the script
 
-1. **Tools → Scripts → Scripts** tab → **+** → choose `obs_webrtc.py`.
+1. **Tools → Scripts → Scripts** tab → **+** → choose `peercam_bridge.py`.
 2. The script starts its server right away. The settings panel shows the
    **Phones connect address**.
 3. **Windows Firewall:** when Windows asks, allow OBS on **Private** networks.
@@ -188,14 +188,14 @@ More fixes are in the help page's Troubleshooting section.
 The server can run without OBS, which is handy for working on the web pages:
 
 ```
-.venv\Scripts\python -m obswebrtc --port 8080 --https-port 8443 --max-cameras 5 --buffer-ms 100
+.venv\Scripts\python -m peercam --port 8080 --https-port 8443 --max-cameras 5 --buffer-ms 100
 ```
 
 Project layout:
 
 ```
-obs_webrtc.py          OBS entry script: venv bootstrap, settings, callbacks
-obswebrtc/
+peercam_bridge.py          OBS entry script: venv bootstrap, settings, callbacks
+peercam/
   server.py            aiohttp server on a background thread (HTTP for OBS, HTTPS for phones)
   rooms.py             camera-slot signaling
   obs_sources.py       creates/updates Browser Sources (the only module using the OBS API)

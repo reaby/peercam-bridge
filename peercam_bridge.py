@@ -1,7 +1,7 @@
-"""OBS WebRTC - entry script loaded by OBS (Tools > Scripts).
+"""PeerCam Bridge - entry script loaded by OBS (Tools > Scripts).
 
 Keep this file thin: it bootstraps the local venv, wires OBS callbacks and
-delegates everything else to the ``obswebrtc`` package.
+delegates everything else to the ``peercam`` package.
 """
 
 import os
@@ -33,7 +33,7 @@ def _venv_python_version():
 
 _venv_version = _venv_python_version()
 if _venv_version and _venv_version != _PY_VERSION:
-    print(f"[obswebrtc] WARNING: .venv was made with Python {_venv_version} but OBS runs "
+    print(f"[peercam] WARNING: .venv was made with Python {_venv_version} but OBS runs "
           f"Python {_PY_VERSION}. Recreate it with the same Python OBS uses (see README).")
 if os.path.isdir(_VENV_SITE):
     site.addsitedir(_VENV_SITE)
@@ -41,17 +41,17 @@ if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
 # Drop cached package modules so "Reload Scripts" in OBS picks up code changes.
-for _name in [m for m in sys.modules if m == "obswebrtc" or m.startswith("obswebrtc.")]:
+for _name in [m for m in sys.modules if m == "peercam" or m.startswith("peercam.")]:
     del sys.modules[_name]
 
 import obspython as obs  # noqa: E402
 
 try:
-    from obswebrtc import __version__, obs_sources  # noqa: E402
-    from obswebrtc.log import get_logger, setup_logging  # noqa: E402
-    from obswebrtc.server import SignalingServer  # noqa: E402
+    from peercam import __version__, obs_sources  # noqa: E402
+    from peercam.log import get_logger, setup_logging  # noqa: E402
+    from peercam.server import SignalingServer  # noqa: E402
 except ImportError as e:
-    print(f"[obswebrtc] ERROR: {e}. Run setup.bat (Windows) or setup.sh (Linux/macOS) "
+    print(f"[peercam] ERROR: {e}. Run setup.bat (Windows) or setup.sh (Linux/macOS) "
           f"in {_HERE} with Python {_PY_VERSION}, then reload the script.")
     raise
 
@@ -142,7 +142,7 @@ def _max_cameras_changed(props, prop, settings):
 
 def script_description():
     return (
-        '<h2 style="margin-bottom:2px">OBS WebRTC</h2>'
+        '<h2 style="margin-bottom:2px">PeerCam Bridge</h2>'
         "<p>Phones and tablets as wireless cameras, over your local network.</p>"
         '<table cellspacing="0" cellpadding="1">'
         "<tr><td><b>1.</b>&nbsp;</td><td>Open the help page and scan the QR code with a phone</td></tr>"

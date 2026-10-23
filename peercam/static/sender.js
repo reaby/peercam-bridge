@@ -7,7 +7,7 @@ const els = {
   dim: $('dim'), blackout: $('blackout'), blackoutText: $('blackout-text'), wake: $('wake'),
 };
 
-const PREFS_KEY = 'obswebrtc.sender';
+const PREFS_KEY = 'peercam.sender';
 const pcs = new Map(); // viewer id -> RTCPeerConnection
 const viewers = new Set(); // viewer ids the server says are in our slot
 let stream = null;

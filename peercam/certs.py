@@ -59,7 +59,7 @@ def _is_usable(cert_path, key_path, ips):
 def _generate(cert_path, key_path, ips):
     key = ec.generate_private_key(ec.SECP256R1())
     host = socket.gethostname()
-    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, f"OBS WebRTC ({host})")])
+    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, f"PeerCam Bridge ({host})")])
     alt_names = [
         x509.DNSName("localhost"),
         x509.DNSName(host),

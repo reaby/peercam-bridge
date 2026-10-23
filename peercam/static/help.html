@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>OBS WebRTC Help</title>
+<title>PeerCam Bridge Help</title>
 <style>
   :root { color-scheme: dark; --bg: #111; --panel: #1a1a1a; --panel2: #222; --fg: #e8e8e8;
           --muted: #9a9a9a; --accent: #2d8cf0; --live: #3ecf6e; --warn: #f5a524; --border: #2e2e2e; }
@@ -68,7 +68,7 @@
 <body>
 <header>
   <div class="bar">
-    <h1>OBS WebRTC</h1>
+    <h1>PeerCam Bridge</h1>
     <span class="pill" id="live-pill">–</span>
     <button id="show-qr">Show phone QR code</button>
   </div>
@@ -132,9 +132,9 @@
   <section id="obs">
     <h2>Adding cameras in OBS</h2>
     <div class="card">
-      <b>Easiest:</b> in the script settings (Tools → Scripts → obs_webrtc.py), under <b>Browser Sources</b>:
+      <b>Easiest:</b> in the script settings (Tools → Scripts → peercam_bridge.py), under <b>Browser Sources</b>:
       <ul>
-        <li><b>Add / update in current scene</b> creates the source <b>"WebRTC Cam N"</b> for the chosen camera,
+        <li><b>Add / update in current scene</b> creates the source <b>"PeerCam N"</b> for the chosen camera,
           with all the settings below, and fits it to the canvas. If it already exists, its settings are
           updated and it's added to the current scene if missing. In Studio Mode it goes to the preview scene.</li>
         <li><b>Add all cameras</b> does the same for every slot.</li>
@@ -167,7 +167,7 @@
     </ul>
 
     <h3>Script settings</h3>
-    <p class="muted">OBS → Tools → Scripts → obs_webrtc.py</p>
+    <p class="muted">OBS → Tools → Scripts → peercam_bridge.py</p>
     <ul>
       <li><b>OBS port</b> (<span data-fill="localPort">8080</span>): local address the Browser Sources use.</li>
       <li><b>Phone port</b> (<span data-fill="httpsPort">8443</span>): the HTTPS address phones use.</li>
@@ -239,7 +239,7 @@
         <p>Create a certificate the phones trust with <a href="https://github.com/FiloSottile/mkcert">mkcert</a>:</p>
         <ol>
           <li>On this PC: <code>mkcert -install</code></li>
-          <li>In the obs-webrtc folder:
+          <li>In the peercam-bridge folder:
             <code id="mkcert-cmd">mkcert -cert-file certs/lan.pem -key-file certs/lan-key.pem localhost</code></li>
           <li>Install mkcert's root certificate (<code>mkcert -CAROOT</code> shows where) on each phone.</li>
           <li>Reload the script in OBS. <code>certs/lan.pem</code> is used automatically when present.</li>

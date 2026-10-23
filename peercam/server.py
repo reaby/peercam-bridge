@@ -162,7 +162,7 @@ class SignalingServer:
         self._prepare_https()
         self._started.clear()
         self._start_error = None
-        self._thread = threading.Thread(target=self._run, name="obswebrtc-server", daemon=True)
+        self._thread = threading.Thread(target=self._run, name="peercam-server", daemon=True)
         self._thread.start()
         if not self._started.wait(timeout):
             raise TimeoutError("server did not start in time")

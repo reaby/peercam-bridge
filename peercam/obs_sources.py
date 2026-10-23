@@ -15,11 +15,11 @@ OBS_ALIGN_CENTER = 0  # C macro, not exported to Python
 
 
 def source_name(cam):
-    return f"WebRTC Cam {cam}"
+    return f"PeerCam {cam}"
 
 
 def add_or_update(cam, url, width, height):
-    """Create "WebRTC Cam N" (or update it if it exists) and make sure it is in
+    """Create "PeerCam N" (or update it if it exists) and make sure it is in
     the current scene (the preview scene in Studio Mode)."""
     name = source_name(cam)
     settings = obs.obs_data_create()
