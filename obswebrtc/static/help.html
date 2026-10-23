@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OBS WebRTC Help</title>
+<style>
+  :root { color-scheme: dark; --bg: #111; --panel: #1a1a1a; --panel2: #222; --fg: #e8e8e8;
+          --muted: #9a9a9a; --accent: #2d8cf0; --live: #3ecf6e; --warn: #f5a524; --border: #2e2e2e; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 16px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { position: sticky; top: 0; z-index: 5; background: rgba(17, 17, 17, .92);
+           backdrop-filter: blur(6px); border-bottom: 1px solid var(--border); }
+  .bar { max-width: 860px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center;
+         gap: 12px; flex-wrap: wrap; }
+  .bar h1 { font-size: 1.1rem; margin: 0; flex: 1; white-space: nowrap; }
+  .pill { font-size: .8rem; color: var(--muted); border: 1px solid var(--border); border-radius: 99px;
+          padding: 2px 10px; white-space: nowrap; }
+  button { font: inherit; font-weight: 600; border: 0; border-radius: 8px; color: #fff;
+           background: var(--accent); padding: 10px 16px; cursor: pointer; }
+  button.small { padding: 4px 10px; font-size: .8rem; font-weight: 500; background: var(--panel2);
+                 border: 1px solid var(--border); }
+  main { max-width: 860px; margin: 0 auto; padding: 8px 16px 64px; }
+  nav { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 16px 0 8px; font-size: .9rem; }
+  nav a { color: var(--muted); text-decoration: none; }
+  nav a:hover { color: var(--fg); }
+  section { margin-top: 36px; scroll-margin-top: 72px; }
+  h2 { font-size: 1.25rem; margin: 0 0 8px; }
+  h3 { font-size: 1rem; margin: 20px 0 4px; }
+  p { margin: 8px 0; }
+  a { color: #6cb4ff; }
+  ol, ul { padding-left: 22px; margin: 8px 0; }
+  li { margin: 4px 0; }
+  code { background: var(--panel2); padding: 1px 6px; border-radius: 4px; font-size: .9em;
+         word-break: break-all; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px;
+          padding: 12px 16px; margin: 12px 0; }
+  .note { border-left: 3px solid var(--warn); background: var(--panel); padding: 8px 12px;
+          border-radius: 0 8px 8px 0; margin: 12px 0; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: .85rem; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #444;
+         margin-right: 6px; vertical-align: middle; }
+  .dot.live { background: var(--live); box-shadow: 0 0 6px var(--live); }
+  details { background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+            padding: 8px 14px; margin: 8px 0; }
+  summary { cursor: pointer; font-weight: 600; }
+  details[open] summary { margin-bottom: 4px; }
+  [hidden] { display: none !important; }
+
+  dialog { border: 1px solid var(--border); border-radius: 14px; background: var(--panel); color: var(--fg);
+           padding: 20px; width: min(420px, calc(100vw - 32px)); }
+  dialog::backdrop { background: rgba(0, 0, 0, .7); }
+  .dlg-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .dlg-head h2 { margin: 0; font-size: 1.1rem; }
+  dialog select { width: 100%; font: inherit; color: var(--fg); background: var(--panel2);
+                  border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+  .qr { background: #fff; border-radius: 10px; padding: 12px; margin: 12px 0; }
+  .qr img { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+  .qr-url { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+  .qr-url code { font-size: .95rem; }
+  .muted { color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <h1>OBS WebRTC</h1>
+    <span class="pill" id="live-pill">–</span>
+    <button id="show-qr">Show phone QR code</button>
+  </div>
+</header>
+
+<main>
+  <nav>
+    <a href="#start">Quick start</a>
+    <a href="#phone">Phone</a>
+    <a href="#obs">OBS sources</a>
+    <a href="#sync">Audio sync</a>
+    <a href="#record">Recording</a>
+    <a href="#network">Network</a>
+    <a href="#cert">Certificate</a>
+    <a href="#trouble">Troubleshooting</a>
+  </nav>
+
+  <section id="start">
+    <h2>Quick start</h2>
+    <p>Phones and tablets stream their camera straight to OBS over your local network. Each phone
+      takes a camera slot (Cam 1–<span data-fill="maxCameras">5</span>), and each slot shows up in
+      OBS as a Browser Source.</p>
+    <ol>
+      <li><b>Connect the phone to the same network</b> as this PC (Wi-Fi or USB-C Ethernet adapter).</li>
+      <li><b>Open the sender page:</b> press <b>Show phone QR code</b> above and scan it with the phone's camera.
+        <span data-self-signed>The first time, the phone warns about the certificate; accept it
+        (<a href="#cert">how</a>).</span></li>
+      <li><b>Pick a camera slot</b> on the phone, press <b>Start</b> and allow camera (and microphone) access.</li>
+      <li><b>In OBS</b>, add a <b>Browser Source</b> with that slot's URL from the
+        <a href="#obs">table below</a>, size 1920×1080.</li>
+    </ol>
+  </section>
+
+  <section id="phone">
+    <h2>Using the phone sender</h2>
+    <div class="table-wrap"><table>
+      <tr><th>Control</th><th>What it does</th></tr>
+      <tr><td>Camera slot</td><td>Which OBS camera this phone becomes. "(in use)" means another phone has it;
+        starting on that slot takes it over and the other phone stops.</td></tr>
+      <tr><td>Lens</td><td>Back camera by default. You can switch while live without dropping the stream.</td></tr>
+      <tr><td>Bitrate</td><td>Video quality cap; can be changed while live. Guide: <b>wired</b> 8–12 Mbps,
+        <b>5 GHz Wi-Fi</b> 4–8 Mbps, <b>busy Wi-Fi</b> 2.5–4 Mbps. "Auto" lets the browser decide,
+        which is often lower than you want for recording.</td></tr>
+      <tr><td>Audio</td><td>Sends the phone's microphone with the video. Phone call processing (echo cancel,
+        noise suppression, auto gain) is off so ambience sounds natural. Set it before Start.</td></tr>
+      <tr><td>Dim</td><td>Blacks out the screen while streaming continues. Tap anywhere to wake.</td></tr>
+    </table></div>
+    <div class="note">
+      <b>Don't press the power button or switch apps while live.</b> Browsers stop the camera when the page
+      goes to the background. The page keeps the screen awake on its own; use <b>Dim</b> instead.
+      If it does get locked, the stream reconnects by itself a few seconds after you unlock.
+    </div>
+    <ul>
+      <li>Keep the phone on a charger for long sessions (the screen stays on).</li>
+      <li>To prevent accidental taps or app switches: <b>App pinning</b> (Android) or
+        <b>Guided Access</b> (iPhone/iPad).</li>
+      <li>The phone remembers its slot, lens, bitrate and audio choice for next time.</li>
+    </ul>
+  </section>
+
+  <section id="obs">
+    <h2>Adding cameras in OBS</h2>
+    <p>Add one <b>Browser Source</b> per camera slot with these settings:</p>
+    <div class="table-wrap"><table>
+      <tr><th>Setting</th><th>Value</th></tr>
+      <tr><td>URL</td><td>The slot's URL from the table below</td></tr>
+      <tr><td>Width × Height</td><td>1920 × 1080 (1080 × 1920 for a phone held upright)</td></tr>
+      <tr><td>Control audio via OBS</td><td><b>On</b>: needed for camera sound in the mixer and in Source Record</td></tr>
+      <tr><td>Shutdown source when not visible</td><td><b>Off</b>: otherwise the camera disconnects whenever it's not in the scene</td></tr>
+      <tr><td>Refresh browser when scene becomes active</td><td><b>Off</b></td></tr>
+    </table></div>
+
+    <h3>Camera URLs</h3>
+    <div class="table-wrap"><table id="viewer-table">
+      <tr><th>Slot</th><th>URL</th><th></th></tr>
+    </table></div>
+    <p class="muted">The dot turns green while a phone is live on that slot.</p>
+
+    <h3>URL options</h3>
+    <p>Add these to the end of a camera URL:</p>
+    <ul>
+      <li><code>&amp;quiet</code>: hide the "Waiting for Cam N" text, so it never ends up in a recording.</li>
+      <li><code>&amp;stats</code>: show connection stats and delay. For setup only; it is visible in the picture.</li>
+      <li><code>&amp;delay=150</code>: override the stable buffer for this camera only (milliseconds).</li>
+    </ul>
+
+    <h3>Script settings</h3>
+    <p class="muted">OBS → Tools → Scripts → obs_webrtc.py</p>
+    <ul>
+      <li><b>OBS port</b> (<span data-fill="localPort">8080</span>): local address the Browser Sources use.</li>
+      <li><b>Allow phones / Phone port</b> (<span data-fill="httpsPort">8443</span>): the HTTPS address phones use.</li>
+      <li><b>Max cameras</b> (<span data-fill="maxCameras">5</span>): how many slots phones can choose.
+        Changing ports or max cameras restarts the server, and phones reconnect by themselves.</li>
+      <li><b>Stable buffer</b> (<span data-fill="buffer">100 ms</span>): see <a href="#sync">audio sync</a>.
+        Changes apply live.</li>
+    </ul>
+  </section>
+
+  <section id="sync">
+    <h2>Audio sync</h2>
+    <p>Each phone's own audio and video stay in sync automatically. What needs adjusting is
+      <b>other audio</b>, like a microphone plugged into the PC: it arrives before the phone video,
+      which takes roughly 150–300 ms to reach OBS.</p>
+    <p>The <b>stable buffer</b> (now <b data-fill="buffer">100 ms</b>) holds every camera at the same
+      steady delay, so a single offset stays correct.</p>
+    <ol>
+      <li>Add <code>&amp;stats</code> to one camera URL and check the video buffer stays near the target.</li>
+      <li><b>Clap test:</b> clap in front of the phone, close to your mic, and record a few seconds.</li>
+      <li>In the recording, count the frames between your hands meeting (video) and the clap spike (mic).
+        At 30 fps one frame is about 33 ms.</li>
+      <li>In OBS, open <b>Edit → Advanced Audio Properties</b> and set the mic's <b>Sync Offset</b> to that delay.</li>
+      <li>Remove <code>&amp;stats</code> again.</li>
+    </ol>
+    <p class="muted">If you change the stable buffer, adjust the Sync Offset by the same amount.</p>
+  </section>
+
+  <section id="record">
+    <h2>Recording each camera for editing</h2>
+    <p>Use the <b>Source Record</b> plugin to save every camera to its own file, alongside the main recording.</p>
+    <ol>
+      <li>Right-click the camera's Browser Source → <b>Filters</b> → add <b>Source Record</b>.</li>
+      <li>Record mode: <b>Recording</b>, so all cameras start and stop with the main recording.</li>
+      <li>Format: <b>MOV</b> or <b>MP4</b>. DaVinci Resolve doesn't handle MKV well; if you record MKV,
+        remux it first (File → Remux Recordings).</li>
+      <li>Encoder: H.264 or HEVC at high quality (e.g. CQP 18–20).</li>
+    </ol>
+    <div class="note">Each Source Record filter is one hardware encoder session, plus one or two for your
+      stream and recording. Check how many sessions your GPU allows before adding more cameras.</div>
+    <p>In Resolve, select the camera clips and your main audio, then right-click →
+      <b>Auto Sync Audio → Based on Waveform</b>.</p>
+  </section>
+
+  <section id="network">
+    <h2>Network</h2>
+    <ul>
+      <li>All phones and this PC must be on the <b>same network</b>, behind the same router. A guest Wi-Fi
+        usually blocks devices from reaching each other, so don't use it.</li>
+      <li><b>USB-C Ethernet adapters:</b> turn Wi-Fi off on those phones so they're sure to use the cable.</li>
+      <li><b>Wi-Fi phones:</b> use 5 GHz and stay near the access point.</li>
+      <li><b>Windows Firewall:</b> when asked, allow OBS (<code>obs64.exe</code>) on <b>Private</b> networks.
+        If you missed the prompt, phones will hang on "Connecting…" (see troubleshooting).</li>
+    </ul>
+  </section>
+
+  <section id="cert">
+    <h2>Certificate</h2>
+    <div data-self-signed>
+      <p>Phones only allow camera access on HTTPS pages, so this PC uses a self-signed certificate.
+        Each phone shows a warning the first time; it's safe to accept it for this address.</p>
+      <ul>
+        <li><b>Chrome (Android):</b> Advanced → Proceed to … (unsafe)</li>
+        <li><b>Safari (iPhone/iPad):</b> Show Details → visit this website → Visit Website</li>
+        <li><b>Firefox:</b> Advanced → Accept the Risk and Continue</li>
+      </ul>
+      <details>
+        <summary>Get rid of the warning (optional)</summary>
+        <p>Create a certificate the phones trust with <a href="https://github.com/FiloSottile/mkcert">mkcert</a>:</p>
+        <ol>
+          <li>On this PC: <code>mkcert -install</code></li>
+          <li>In the obs-webrtc folder:
+            <code id="mkcert-cmd">mkcert -cert-file certs/lan.pem -key-file certs/lan-key.pem localhost</code></li>
+          <li>Install mkcert's root certificate (<code>mkcert -CAROOT</code> shows where) on each phone.</li>
+          <li>Reload the script in OBS. <code>certs/lan.pem</code> is used automatically when present.</li>
+        </ol>
+      </details>
+    </div>
+    <p data-custom-cert hidden>Using your own trusted certificate (<code>certs/lan.pem</code>). Phones shouldn't show a warning.</p>
+  </section>
+
+  <section id="trouble">
+    <h2>Troubleshooting</h2>
+    <details>
+      <summary>Phone says "Camera access needs HTTPS"</summary>
+      <p>The page was opened with <code>http://</code>. Use the <code>https://</code> address from the QR code.</p>
+    </details>
+    <details>
+      <summary>Phone can't open the page, or stays on "Connecting…"</summary>
+      <ul>
+        <li>Check the phone is on the same network (not guest Wi-Fi or mobile data).</li>
+        <li>Allow OBS through Windows Firewall: Windows Security → Firewall → Allow an app → OBS Studio → Private.</li>
+        <li>Try another address in the QR code selector; the PC may have several network adapters.</li>
+        <li>iPhone/iPad: open the address again and re-accept the certificate warning.</li>
+      </ul>
+    </details>
+    <details>
+      <summary>Phone is live but OBS shows "Waiting for Cam N"</summary>
+      <p>Check the slot number on the phone matches the URL's <code>cam=</code> number. Then right-click
+        the Browser Source → Properties → <b>Refresh cache of current page</b>.</p>
+    </details>
+    <details>
+      <summary>Phone says "waiting for OBS"</summary>
+      <p>No Browser Source is showing that slot right now. Add one, or turn off "Shutdown source when not
+        visible" so it stays connected outside the current scene.</p>
+    </details>
+    <details>
+      <summary>Picture froze after the phone locked or switched apps</summary>
+      <p>Unlock the phone and return to the browser; it reconnects within a few seconds. If not, press Stop and Start.</p>
+    </details>
+    <details>
+      <summary>No sound from a camera</summary>
+      <p>Tick <b>Audio</b> on the phone <i>before</i> pressing Start, and turn on <b>Control audio via OBS</b>
+        in the Browser Source. The camera then appears in the audio mixer.</p>
+    </details>
+    <details>
+      <summary>Phone says "Another device took Cam N"</summary>
+      <p>Two phones picked the same slot; the newest one wins. Choose a free slot on one of them.</p>
+    </details>
+    <details>
+      <summary>Picture is blurry or blocky</summary>
+      <p>Raise the bitrate on the phone. If it gets worse when you do, the network can't keep up:
+        move closer to the access point, switch to 5 GHz, or use a USB-C Ethernet adapter.
+        <code>&amp;stats</code> shows packet loss.</p>
+    </details>
+  </section>
+</main>
+
+<dialog id="qr-dialog">
+  <div class="dlg-head">
+    <h2>Scan with the phone</h2>
+    <button class="small" id="close-qr">Close</button>
+  </div>
+  <div id="qr-body">
+    <select id="qr-select" aria-label="Network address"></select>
+    <div class="qr"><img id="qr-img" alt="QR code for the phone address"></div>
+    <div class="qr-url"><code id="qr-url"></code><button class="small" id="copy-qr">Copy</button></div>
+    <p class="muted" data-self-signed>First visit: accept the certificate warning on the phone.</p>
+    <p class="muted" id="qr-multi" hidden>Doesn't load? Try another address; this PC has more than one network adapter.</p>
+  </div>
+  <p id="qr-none" hidden>Phone access is off, or no network address was found. Turn on
+    <b>Allow phones</b> in the script settings.</p>
+</dialog>
+
+<script type="module" src="/static/help.js"></script>
+</body>
+</html>

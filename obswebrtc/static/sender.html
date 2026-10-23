@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OBS WebRTC Sender</title>
+<style>
+  :root { color-scheme: dark; --bg: #111; --panel: #1c1c1c; --fg: #eee; --muted: #999;
+          --accent: #2d8cf0; --live: #e5484d; --border: #333; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 16px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 560px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.1rem; margin: 0 0 12px; }
+  .preview { position: relative; background: #000; border-radius: 8px; overflow: hidden;
+             aspect-ratio: 16 / 9; }
+  video { width: 100%; height: 100%; object-fit: contain; display: block; }
+  video.mirror { transform: scaleX(-1); }
+  .badge { position: absolute; top: 8px; left: 8px; padding: 2px 8px; border-radius: 4px;
+           background: var(--live); font-size: .8rem; font-weight: 600; display: none; }
+  .live .badge { display: block; }
+  .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  label { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; color: var(--muted); }
+  select { font: inherit; color: var(--fg); background: var(--panel); border: 1px solid var(--border);
+           border-radius: 6px; padding: 10px; }
+  .check { flex-direction: row; align-items: center; gap: 8px; color: var(--fg); font-size: 1rem; }
+  .check input { width: 22px; height: 22px; }
+  button { margin-top: 16px; width: 100%; padding: 14px; font: inherit; font-weight: 600;
+           border: 0; border-radius: 8px; color: #fff; background: var(--accent); }
+  .live button { background: var(--live); }
+  button:disabled { opacity: .5; }
+  .buttons { display: flex; gap: 12px; }
+  .buttons button { flex: 1; }
+  #dim { flex: 0 0 30%; background: var(--panel); border: 1px solid var(--border); }
+  [hidden] { display: none !important; }
+  #status { margin-top: 12px; color: var(--muted); min-height: 1.4em; }
+  #wake { margin-top: 4px; font-size: .85rem; color: var(--muted); }
+  #wake.warn { color: #f5a524; }
+  #blackout { position: fixed; inset: 0; z-index: 10; background: #000; display: flex;
+              align-items: center; justify-content: center; }
+  #blackout-text { color: #333; font-size: .9rem; }
+</style>
+</head>
+<body>
+<main id="app">
+  <h1>OBS WebRTC Sender</h1>
+  <div class="preview">
+    <video id="preview" autoplay playsinline muted></video>
+    <span class="badge" id="badge">LIVE</span>
+  </div>
+
+  <div class="controls">
+    <label>Camera slot
+      <select id="cam"></select>
+    </label>
+    <label>Lens
+      <select id="facing">
+        <option value="environment">Back</option>
+        <option value="user">Front</option>
+      </select>
+    </label>
+    <label>Bitrate
+      <select id="bitrate">
+        <option value="0">Auto</option>
+        <option value="1000">1 Mbps</option>
+        <option value="2500">2.5 Mbps</option>
+        <option value="4000">4 Mbps</option>
+        <option value="6000">6 Mbps</option>
+        <option value="8000">8 Mbps</option>
+        <option value="12000">12 Mbps</option>
+      </select>
+    </label>
+    <label class="check"><input type="checkbox" id="audio"> Audio</label>
+  </div>
+
+  <div class="buttons">
+    <button id="start">Start</button>
+    <button id="dim" hidden>Dim</button>
+  </div>
+  <div id="status"></div>
+  <div id="wake"></div>
+</main>
+<div id="blackout" hidden><span id="blackout-text"></span></div>
+<script type="module" src="/static/sender.js"></script>
+</body>
+</html>

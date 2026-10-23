@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OBS WebRTC Viewer</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; }
+  video { width: 100vw; height: 100vh; object-fit: contain; display: block; }
+  #waiting { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+             color: rgba(255, 255, 255, .7); font: 600 4vh system-ui, sans-serif;
+             text-shadow: 0 0 6px #000; }
+  #stats { position: fixed; top: 1vh; left: 1vh; margin: 0; padding: .6em .8em; border-radius: 6px;
+           background: rgba(0, 0, 0, .65); color: #fff; font: 2.2vh/1.4 ui-monospace, Consolas, monospace; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<!-- Usage in OBS Browser Source: /view?cam=N
+     &quiet     hide the "waiting" text
+     &stats     show connection/latency overlay (don't leave on while recording)
+     &delay=MS  override the buffer target from OBS for this viewer -->
+<video id="video" autoplay playsinline></video>
+<div id="waiting"></div>
+<pre id="stats" class="hidden"></pre>
+<script type="module" src="/static/viewer.js"></script>
+</body>
+</html>
