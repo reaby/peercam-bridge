@@ -4,6 +4,7 @@ const $ = (id) => document.getElementById(id);
 const els = {
   app: $('app'), preview: $('preview'), cam: $('cam'), facing: $('facing'),
   bitrate: $('bitrate'), audio: $('audio'), start: $('start'), status: $('status'),
+  zoomRow: $('zoom-row'), zoom: $('zoom'), zoomValue: $('zoom-value'),
   dim: $('dim'), blackout: $('blackout'), blackoutText: $('blackout-text'), wake: $('wake'),
 };
 
@@ -14,6 +15,8 @@ let stream = null;
 let sig = null;
 let wakeLock = null;
 let live = false;
+let zoomTarget = null; // latest slider value not yet applied to the track
+let zoomBusy = false;
 
 const setStatus = (text) => { els.status.textContent = text; };
 
@@ -56,6 +59,8 @@ function videoConstraints() {
   return {
     facingMode: { ideal: els.facing.value },
     width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 },
+    // Chrome only exposes the zoom capability when it is asked for up front.
+    zoom: true,
   };
 }
 
@@ -74,6 +79,49 @@ function showPreview() {
 function prepareVideoTrack(track) {
   // Prefer keeping resolution over frame rate when bandwidth drops.
   if (track && 'contentHint' in track) track.contentHint = 'detail';
+}
+
+// --- zoom --------------------------------------------------------------------
+
+function showZoomValue() {
+  els.zoomValue.textContent = `${Number(els.zoom.value).toFixed(1)}×`;
+}
+
+// Show the slider if this lens can zoom. `keep` re-applies the current slider
+// value (same lens reopened); otherwise start from the lens' own zoom.
+function setupZoom(track, keep = false) {
+  const caps = track?.getCapabilities?.().zoom;
+  if (!caps || !(caps.max > caps.min)) {
+    els.zoomRow.hidden = true;
+    return;
+  }
+  const previous = Number(els.zoom.value);
+  els.zoom.min = caps.min;
+  els.zoom.max = caps.max;
+  els.zoom.step = caps.step || 0.1;
+  els.zoom.value = keep ? previous : (track.getSettings().zoom ?? caps.min);
+  els.zoomRow.hidden = false;
+  showZoomValue();
+  if (keep) applyZoom();
+}
+
+// Slider input fires faster than the camera can follow; apply only the latest value.
+async function applyZoom() {
+  zoomTarget = Number(els.zoom.value);
+  if (zoomBusy) return;
+  zoomBusy = true;
+  try {
+    while (zoomTarget !== null) {
+      const zoom = zoomTarget;
+      zoomTarget = null;
+      const track = stream?.getVideoTracks()[0];
+      if (track) await track.applyConstraints({ advanced: [{ zoom }] });
+    }
+  } catch (e) {
+    console.warn('zoom', e);
+  } finally {
+    zoomBusy = false;
+  }
 }
 
 async function captureTrack(kind) {
@@ -100,7 +148,9 @@ async function switchLens() {
   if (!old) return;
   // Many phones can't open two cameras at once, so release the old one first.
   old.stop();
-  await swapTrack(old, await captureTrack('video'));
+  const track = await captureTrack('video');
+  await swapTrack(old, track);
+  setupZoom(track);
 }
 
 // Locking the phone or leaving the browser can end camera/mic tracks; reopen them.
@@ -109,7 +159,9 @@ async function recoverTracks() {
   const ended = stream.getTracks().filter((t) => t.readyState === 'ended');
   for (const old of ended) {
     try {
-      await swapTrack(old, await captureTrack(old.kind));
+      const track = await captureTrack(old.kind);
+      await swapTrack(old, track);
+      if (track.kind === 'video') setupZoom(track, true);
     } catch (e) {
       setStatus(`Could not reopen ${old.kind}: ${e.message || e.name}`);
       return;
@@ -260,7 +312,10 @@ function setLive(on) {
   els.cam.disabled = on;
   els.audio.disabled = on;
   els.dim.hidden = !on;
-  if (!on) setBlackout(false);
+  if (!on) {
+    setBlackout(false);
+    els.zoomRow.hidden = true;
+  }
 }
 
 async function start() {
@@ -280,6 +335,7 @@ async function start() {
   prepareVideoTrack(stream.getVideoTracks()[0]);
   showPreview();
   setLive(true);
+  setupZoom(stream.getVideoTracks()[0]);
   savePrefs();
 
   sig = new Signaling(onSignal, onSocketState);
@@ -312,6 +368,11 @@ els.facing.addEventListener('change', async () => {
   savePrefs();
   if (!live) return;
   try { await switchLens(); } catch (e) { setStatus(`Lens switch failed: ${e.message || e.name}`); }
+});
+
+els.zoom.addEventListener('input', () => {
+  showZoomValue();
+  applyZoom();
 });
 
 els.cam.addEventListener('change', savePrefs);

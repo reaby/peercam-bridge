@@ -25,6 +25,10 @@
            border-radius: 6px; padding: 10px; }
   .check { flex-direction: row; align-items: center; gap: 8px; color: var(--fg); font-size: 1rem; }
   .check input { width: 22px; height: 22px; }
+  .zoom { grid-column: 1 / -1; }
+  .zoom span { display: flex; justify-content: space-between; }
+  .zoom output { color: var(--fg); font-variant-numeric: tabular-nums; }
+  input[type=range] { width: 100%; height: 32px; margin: 0; accent-color: var(--accent); }
   button { margin-top: 16px; width: 100%; padding: 14px; font: inherit; font-weight: 600;
            border: 0; border-radius: 8px; color: #fff; background: var(--accent); }
   .live button { background: var(--live); }
@@ -71,6 +75,10 @@
       </select>
     </label>
     <label class="check"><input type="checkbox" id="audio"> Audio</label>
+    <label class="zoom" id="zoom-row" hidden>
+      <span>Zoom <output id="zoom-value"></output></span>
+      <input type="range" id="zoom">
+    </label>
   </div>
 
   <div class="buttons">
